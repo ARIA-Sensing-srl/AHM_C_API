@@ -1,4 +1,4 @@
-AC_INIT([AHMDatagrab], [1.0])
+AC_INIT([AHM_C_API], [1.0])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AC_PROG_CXX
 AC_PROG_CC

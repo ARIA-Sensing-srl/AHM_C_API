@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = AHMDatagrab$(EXEEXT)
+bin_PROGRAMS = AHMCaptureData$(EXEEXT) AHMCaptureImage$(EXEEXT)
 @ENABLE_SPI_TRUE@am__append_1 = -DCONFIG_USE_SPI
 @WINDOWS_TRUE@am__append_2 = -DWIN
 @ENABLE_SPI_TRUE@am__append_3 = spi/radarif_ll_spi.cpp
@@ -111,33 +111,48 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__AHMDatagrab_SOURCES_DIST = radar_data/radarData.cpp \
-	radar_data/radarDataVolume.cpp radar_handlers/radar_AHM2D.cpp \
-	radar_handlers/radar_AHM3D.cpp radar_handlers/radar_AHM2DL.cpp \
-	radar_handlers/radar_api_base.cpp src/example.cpp \
-	src/f16tosingle.cpp src/msgEncoderDecored.cpp \
-	uart/radarif_ll.cpp uart/radarif_ll_uart.cpp \
-	spi/radarif_ll_spi.cpp spi/spi_interface_FTDI.cpp \
-	wiringPiSource/winSerial.c wiringPiSource/wiringSerial.c \
-	spi/spi_interface.cpp
+am__AHMCaptureData_SOURCES_DIST = src/example.cpp \
+	radar_data/radarData.cpp radar_data/radarDataVolume.cpp \
+	radar_handlers/radar_AHM2D.cpp radar_handlers/radar_AHM3D.cpp \
+	radar_handlers/radar_AHM2DL.cpp \
+	radar_handlers/radar_api_base.cpp src/f16tosingle.cpp \
+	src/msgEncoderDecored.cpp uart/radarif_ll.cpp \
+	uart/radarif_ll_uart.cpp spi/radarif_ll_spi.cpp \
+	spi/spi_interface_FTDI.cpp wiringPiSource/winSerial.c \
+	wiringPiSource/wiringSerial.c spi/spi_interface.cpp
 am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_SPI_TRUE@am__objects_1 = spi/radarif_ll_spi.$(OBJEXT)
 @USE_FTDI_TRUE@am__objects_2 = spi/spi_interface_FTDI.$(OBJEXT)
 @WINDOWS_TRUE@am__objects_3 = wiringPiSource/winSerial.$(OBJEXT)
 @WINDOWS_FALSE@am__objects_4 = wiringPiSource/wiringSerial.$(OBJEXT)
 @USE_WIRINGPI_TRUE@am__objects_5 = spi/spi_interface.$(OBJEXT)
-am_AHMDatagrab_OBJECTS = radar_data/radarData.$(OBJEXT) \
+am__objects_6 = radar_data/radarData.$(OBJEXT) \
 	radar_data/radarDataVolume.$(OBJEXT) \
 	radar_handlers/radar_AHM2D.$(OBJEXT) \
 	radar_handlers/radar_AHM3D.$(OBJEXT) \
 	radar_handlers/radar_AHM2DL.$(OBJEXT) \
-	radar_handlers/radar_api_base.$(OBJEXT) src/example.$(OBJEXT) \
+	radar_handlers/radar_api_base.$(OBJEXT) \
 	src/f16tosingle.$(OBJEXT) src/msgEncoderDecored.$(OBJEXT) \
 	uart/radarif_ll.$(OBJEXT) uart/radarif_ll_uart.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4) $(am__objects_5)
-AHMDatagrab_OBJECTS = $(am_AHMDatagrab_OBJECTS)
-AHMDatagrab_DEPENDENCIES =
+am_AHMCaptureData_OBJECTS = src/example.$(OBJEXT) $(am__objects_6)
+AHMCaptureData_OBJECTS = $(am_AHMCaptureData_OBJECTS)
+am__DEPENDENCIES_1 =
+AHMCaptureData_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__AHMCaptureImage_SOURCES_DIST = src/exampleimage.cpp \
+	radar_data/radarData.cpp radar_data/radarDataVolume.cpp \
+	radar_handlers/radar_AHM2D.cpp radar_handlers/radar_AHM3D.cpp \
+	radar_handlers/radar_AHM2DL.cpp \
+	radar_handlers/radar_api_base.cpp src/f16tosingle.cpp \
+	src/msgEncoderDecored.cpp uart/radarif_ll.cpp \
+	uart/radarif_ll_uart.cpp spi/radarif_ll_spi.cpp \
+	spi/spi_interface_FTDI.cpp wiringPiSource/winSerial.c \
+	wiringPiSource/wiringSerial.c spi/spi_interface.cpp
+am_AHMCaptureImage_OBJECTS = src/exampleimage.$(OBJEXT) \
+	$(am__objects_6)
+AHMCaptureImage_OBJECTS = $(am_AHMCaptureImage_OBJECTS)
+AHMCaptureImage_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -161,7 +176,7 @@ am__depfiles_remade = radar_data/$(DEPDIR)/radarData.Po \
 	radar_handlers/$(DEPDIR)/radar_api_base.Po \
 	spi/$(DEPDIR)/radarif_ll_spi.Po spi/$(DEPDIR)/spi_interface.Po \
 	spi/$(DEPDIR)/spi_interface_FTDI.Po src/$(DEPDIR)/example.Po \
-	src/$(DEPDIR)/f16tosingle.Po \
+	src/$(DEPDIR)/exampleimage.Po src/$(DEPDIR)/f16tosingle.Po \
 	src/$(DEPDIR)/msgEncoderDecored.Po \
 	uart/$(DEPDIR)/radarif_ll.Po uart/$(DEPDIR)/radarif_ll_uart.Po \
 	wiringPiSource/$(DEPDIR)/winSerial.Po \
@@ -192,8 +207,9 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(AHMDatagrab_SOURCES)
-DIST_SOURCES = $(am__AHMDatagrab_SOURCES_DIST)
+SOURCES = $(AHMCaptureData_SOURCES) $(AHMCaptureImage_SOURCES)
+DIST_SOURCES = $(am__AHMCaptureData_SOURCES_DIST) \
+	$(am__AHMCaptureImage_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -342,16 +358,19 @@ AM_CPPFLAGS = -I$(srcdir)/ahm_cmds -I$(srcdir)/inc \
 	-I$(srcdir)/spi -I$(srcdir)/src -I$(srcdir)/uart \
 	-I$(srcdir)/wiringPiSource $(am__append_1) $(am__append_2)
 AUTOMAKE_OPTIONS = subdir-objects
-AHMDatagrab_SOURCES = radar_data/radarData.cpp \
+app_common_sources = radar_data/radarData.cpp \
 	radar_data/radarDataVolume.cpp radar_handlers/radar_AHM2D.cpp \
 	radar_handlers/radar_AHM3D.cpp radar_handlers/radar_AHM2DL.cpp \
-	radar_handlers/radar_api_base.cpp src/example.cpp \
-	src/f16tosingle.cpp src/msgEncoderDecored.cpp \
-	uart/radarif_ll.cpp uart/radarif_ll_uart.cpp $(am__append_3) \
-	$(am__append_4) $(am__append_5) $(am__append_6) \
-	$(am__append_7)
-@USE_FTDI_TRUE@AHMDatagrab_LDADD = -lmpsse -lftd2xx
-@USE_WIRINGPI_TRUE@AHMDatagrab_LDADD = -lwiringPi
+	radar_handlers/radar_api_base.cpp src/f16tosingle.cpp \
+	src/msgEncoderDecored.cpp uart/radarif_ll.cpp \
+	uart/radarif_ll_uart.cpp $(am__append_3) $(am__append_4) \
+	$(am__append_5) $(am__append_6) $(am__append_7)
+@USE_FTDI_TRUE@app_common_ldadd = -lmpsse -lftd2xx
+@USE_WIRINGPI_TRUE@app_common_ldadd = -lwiringPi
+AHMCaptureData_SOURCES = src/example.cpp $(app_common_sources)
+AHMCaptureData_LDADD = $(app_common_ldadd)
+AHMCaptureImage_SOURCES = src/exampleimage.cpp $(app_common_sources)
+AHMCaptureImage_LDADD = $(app_common_ldadd)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -447,6 +466,14 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+src/$(am__dirstamp):
+	@$(MKDIR_P) src
+	@: > src/$(am__dirstamp)
+src/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) src/$(DEPDIR)
+	@: > src/$(DEPDIR)/$(am__dirstamp)
+src/example.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 radar_data/$(am__dirstamp):
 	@$(MKDIR_P) radar_data
 	@: > radar_data/$(am__dirstamp)
@@ -472,14 +499,6 @@ radar_handlers/radar_AHM2DL.$(OBJEXT): radar_handlers/$(am__dirstamp) \
 radar_handlers/radar_api_base.$(OBJEXT):  \
 	radar_handlers/$(am__dirstamp) \
 	radar_handlers/$(DEPDIR)/$(am__dirstamp)
-src/$(am__dirstamp):
-	@$(MKDIR_P) src
-	@: > src/$(am__dirstamp)
-src/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) src/$(DEPDIR)
-	@: > src/$(DEPDIR)/$(am__dirstamp)
-src/example.$(OBJEXT): src/$(am__dirstamp) \
-	src/$(DEPDIR)/$(am__dirstamp)
 src/f16tosingle.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/msgEncoderDecored.$(OBJEXT): src/$(am__dirstamp) \
@@ -517,9 +536,15 @@ wiringPiSource/wiringSerial.$(OBJEXT): wiringPiSource/$(am__dirstamp) \
 spi/spi_interface.$(OBJEXT): spi/$(am__dirstamp) \
 	spi/$(DEPDIR)/$(am__dirstamp)
 
-AHMDatagrab$(EXEEXT): $(AHMDatagrab_OBJECTS) $(AHMDatagrab_DEPENDENCIES) $(EXTRA_AHMDatagrab_DEPENDENCIES) 
-	@rm -f AHMDatagrab$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(AHMDatagrab_OBJECTS) $(AHMDatagrab_LDADD) $(LIBS)
+AHMCaptureData$(EXEEXT): $(AHMCaptureData_OBJECTS) $(AHMCaptureData_DEPENDENCIES) $(EXTRA_AHMCaptureData_DEPENDENCIES) 
+	@rm -f AHMCaptureData$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(AHMCaptureData_OBJECTS) $(AHMCaptureData_LDADD) $(LIBS)
+src/exampleimage.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+
+AHMCaptureImage$(EXEEXT): $(AHMCaptureImage_OBJECTS) $(AHMCaptureImage_DEPENDENCIES) $(EXTRA_AHMCaptureImage_DEPENDENCIES) 
+	@rm -f AHMCaptureImage$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(AHMCaptureImage_OBJECTS) $(AHMCaptureImage_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -543,6 +568,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@spi/$(DEPDIR)/spi_interface.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@spi/$(DEPDIR)/spi_interface_FTDI.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/example.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/exampleimage.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/f16tosingle.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/msgEncoderDecored.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@uart/$(DEPDIR)/radarif_ll.Po@am__quote@ # am--include-marker
@@ -884,6 +910,7 @@ distclean: distclean-am
 	-rm -f spi/$(DEPDIR)/spi_interface.Po
 	-rm -f spi/$(DEPDIR)/spi_interface_FTDI.Po
 	-rm -f src/$(DEPDIR)/example.Po
+	-rm -f src/$(DEPDIR)/exampleimage.Po
 	-rm -f src/$(DEPDIR)/f16tosingle.Po
 	-rm -f src/$(DEPDIR)/msgEncoderDecored.Po
 	-rm -f uart/$(DEPDIR)/radarif_ll.Po
@@ -947,6 +974,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f spi/$(DEPDIR)/spi_interface.Po
 	-rm -f spi/$(DEPDIR)/spi_interface_FTDI.Po
 	-rm -f src/$(DEPDIR)/example.Po
+	-rm -f src/$(DEPDIR)/exampleimage.Po
 	-rm -f src/$(DEPDIR)/f16tosingle.Po
 	-rm -f src/$(DEPDIR)/msgEncoderDecored.Po
 	-rm -f uart/$(DEPDIR)/radarif_ll.Po
