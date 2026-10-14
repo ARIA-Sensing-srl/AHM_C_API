@@ -83,4 +83,11 @@ typedef struct _scanSequence_t{
 	uint8_t numAnt;
 }scanSequence_t;
 
+typedef enum _profile_t {
+    PROF_SR_MID_RES = 0,
+    PROF_SR_HIGH_RES = 1,
+    PROF_LR_MID_RES = 2,
+    PROF_LR_HIGH_RE = 3
+}profile_t;
+
 #endif /* AHM_CMDS_AHM_COMMON_H_ */

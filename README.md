@@ -15,7 +15,8 @@ Supported autotools and cmake
 CMake auto detect libraries (FTDI / wiringPi) and automatically enable support for SPI
 
 Examples: 
-AHMDatagrab: shown how to configure the device and retrieve data. Data are stored into txt files, one raw for acquisition, commad-separated-value, organized as I0, Q0, .... In, Qn where I is the real part and Q is the imaginary part of the sample n. The example retrieve the final configuration and save all the data into a JSON formatted file
+AHMDataCapture: shows how to configure the device and retrieve data. Data are stored into txt files, one raw for acquisition, commad-separated-value, organized as I0, Q0, .... In, Qn where I is the real part and Q is the imaginary part of the sample n. The example retrieve the final configuration and save all the data into a JSON formatted file
+AHMImageCapture: shows how to configure the device and get computed image. Outcome is stored into a comma-separated-value file.
 
 
 ##BUILD examples Linux###
@@ -24,21 +25,21 @@ AHMDatagrab: shown how to configure the device and retrieve data. Data are store
 	mkdir build && cd build
 	../configure
 	make
-	./AHMDataGrab uart /dev/ttyUSBx
+	./AHMDataCapture uart /dev/ttyUSBx
 
 ##Windows (msys)
 	cd AHM_C_API
 	mkdir build && cd build
 	../configure
 	make
-	./AHMDataGrab uart \\\\.\\COMx
+	./AHMDataCapture uart \\\\.\\COMx
 	
 ## SPI support ######
 	./configure --enable-spi=ftdi (require mpsse and ftd2x libraries)
 	./configure --enable-spi=wiringpi (requires wiringPi libraries, raspberry pi only)
 	
 ## Run the example using FTDI interface ##
-Run the example using FTDI cable, requires manual detach of the FTDI cable (C232HM-DDHSL-0 tested) from the default driver. The procedure may vary between distro and requries superuser access.
+Run the example using FTDI cable, requires manual detach of the FTDI cable (C232HM-DDHSL-0 tested) from the default driver (serial port). The procedure may vary between distro and requries superuser access.
 1. attach the device
 2. Run
 	sudo dmesg
@@ -52,15 +53,15 @@ Run the example using FTDI cable, requires manual detach of the FTDI cable (C232
 	sudo chmod o+w /sys/bus/usb-serial/drivers/generic/module/drivers/usb:ftdi_sio/unbind
 	echo -n "4-1.1:1.0" > /sys/bus/usb-serial/drivers/generic/module/drivers/usb:ftdi_sio/unbind
 	
-NOTE: Almalinux map the unbind in
+NOTE: Almalinux map the unbind into
 	/sys/bus/usb/drivers/ftdi_sio/unbind
 
 6. Once unbinded, run the example:
-	./AHMDatagrab spi 0
+	./AHMDataCapture spi 0
 	
 ## Run the example using wiring Pi
 This requires spidev interface enable to expose spidevx.x
-	./AHMDatagrap spi /dev/spidevx.x
+	./AHMDataCapture spi /dev/spidevx.x
 	
 	
 	

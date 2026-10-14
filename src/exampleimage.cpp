@@ -8,48 +8,35 @@
 
 
 #include "stdio.h"
+#ifndef WIN
 #include "unistd.h"
+#include <sys/time.h>
+#else
+#include <windows.h>
+#include "synchapi.h"
+#endif
 #include "wiringSerial.h"
 #include "radarif_ll.h"
+#include "radarif_ll_uart.h"
 #include "radar_AHM2D.h"
+#include "radar_AHM2DL.h"
 #include "ahm_comm_def.h"
+#ifdef CONFIG_USE_SPI
 #include "radarif_ll_spi.h"
+#endif
 #include "string.h"
 
-static int serial_fd=0;
-static rifll_h * comm_h; //communication handler
-static radar_AHM2D * rdr_h;
+#ifdef WIN
+#define usleep(x) Sleep(x/1000)
+#define sleep(x) Sleep(x*1000)
+#endif
+
+static radar_api_base * rdr_h;
 
 
-int txdata(uint8_t * buffer, int size){
-	for(int i=0; i < size; i++){
-		serialPutchar(serial_fd, *buffer++);
-	}
-	return 0;
-}
 
-int rxdata(uint8_t * buffer, int size){
-	int ret;
-	int retry = 0;
-	do{
-		ret = serialDataAvail(serial_fd);
-		if (ret > 0){
-			*buffer = serialGetchar(serial_fd);
-			buffer += 1;
-			size -= 1;
-		}
-		if (ret <= 0){
-			usleep(1000);
-			retry++;
-		}
-	}while(size && (retry < 1000));
 
-	if (ret)
-		return ret;
-	return -1; //if ret == 0 error
-}
-
-static int configure_rdr(radar_AHM2D * h){
+static int configure_rdr(radar_api_base * h){
 
 	uint16_t hwCode;
 	if (h->getHW(&hwCode)){
@@ -60,56 +47,82 @@ static int configure_rdr(radar_AHM2D * h){
 		printf("Invalid HW code, verify connected HW type\n");
 		return -1;
 	}
-	if (h->rdr_stop())
+
+	if (h->rdr_stop()){
+		printf("Stop failed\n");
 		return -1;
-	if (h->rdr_set_freq_carrier(8064))
+	}
+
+	if (h->rdr_set_profile(PROF_SR_MID_RES)) {
+		printf("Set profile failed\n");
 		return -1;
-	if (h->rdr_set_bw( 1000))
+	}
+	sleep(1); //required for correct setup
+
+
+
+	if (h->rdr_set_staticObjRemoval(1)) {
+		printf("Set static object removal failed\n");
 		return -1;
-	uint8_t opt1, opt0;
-	opt1 = (1<<RDCOM_OPTPROC_BYTE1_EXE_RECONSTRUCTION);
-	opt0 = (1<<RDCOM_OPTPROC_BYTE0_DCREM_POS) | (1<<RDCOM_OPTPROC_BYTE0_MATCHFILT_POS);
-	if (h->rdr_set_optproc( opt0, opt1))
+	}
+
+	if (h->rdr_set_staticObjMapUpdateTime(30)) {
+		printf("Set static object map update time failed\n");
+		return -1;
+	}
+
+	if (h->rdr_set_embeddedImgAlgo(1)) {
+		printf("Embedded image algorithm set fails\n");
+		return -1;
+	}
+
+	volatile uint8_t val = 0;
+	h->rdr_get_embeddedImgAlgo((uint8_t*)&val);
+
+
+	//acquisition offset (meters), the default -1 m value has been found by in-house calibration
+	/*if (h->rdr_set_offset(-1))
+		return -1;*/
+
+	//acquisition range (meters)
+	if (h->rdr_set_min_Xrange(0))
+		return -1;
+	if (h->rdr_set_max_Xrange(5))
 		return -1;
 
-	if(h->rdr_set_offset(-4))
+	//transmitter power (0==OFF to 7==MAX)
+	if (h->rdr_set_tx_power(7))
 		return -1;
 
-	if(h->rdr_set_min_Xrange(1))
-		return -1;
-	if (h->rdr_set_max_Xrange( 5))
-		return -1;
-	if (h->rdr_set_gain(20, 20))
-		return -1;
-	if (h->rdr_set_declutter_length(100))
+	//number of integrations (aka number of pulses for build a stream)
+	int iterationsSetting = 10000;
+	if (h->HWCODE == rdr_AHM2DL::HWID)
+		iterationsSetting = 4000;
+
+	if (h->rdr_set_iterations(iterationsSetting))
 		return -1;
 
-	int8_t code[1] = {1};
-	if(h->rdr_set_code( code, sizeof(code)))
-		return -1;
-	if (h->rdr_set_tx_power( 7))
-		return -1;
-	if (h->rdr_set_iterations( 10000))
+	//returned data type (RAW/MTI)
+	if(h->rdr_set_elabtype(RT_MTI))
 		return -1;
 
-	uint8_t txScan[4];
-	uint8_t rxScan[4];
-	txScan[0] = AHM_ANT_TX1;
-	rxScan[0] = AHM_ANT_RX1;
-	txScan[1] = AHM_ANT_TX1;
-	rxScan[1] = AHM_ANT_RX2;
-	txScan[2] = AHM_ANT_TX2;
-	rxScan[2] = AHM_ANT_RX2;
-	txScan[3] = AHM_ANT_TX2;
-	rxScan[3] = AHM_ANT_RX1;
-	if(h->rdr_set_sequence( txScan, rxScan, 4))
-		return -1;
-
-	if(h->rdr_set_elabtype(RT_RAW))
-		return -1;
-
+	//data format (data transfer only, returned data are converted locally to float)
 	if(h->rdr_set_fmt(FMT_F16))
 		return -1;
+
+	//required frame rate (Hz)
+	if (h->rdr_set_frame_rate(20))
+		return -1;
+
+
+	uint16_t fs;
+	//get current ADC's sampling rate (MHz)
+	if (h->rdr_get_fSampling(&fs))
+		return -1;
+	printf("Sampling rate: %d\r\n", fs);
+
+
+
 
 	if (h->rdr_start())
 		return -1;
@@ -117,12 +130,34 @@ static int configure_rdr(radar_AHM2D * h){
 	return 0;
 }
 
+/**
+ * This routine inquiry the device ID and instance the handler
+ * */
+radar_api_base * openDevice(rifll_h * comm_h){
+	uint16_t hwCode;
+	if (radar_api_base::getHW(comm_h, &hwCode)){
+		printf("Error on retrieve HWID\n");
+		return NULL;
+	}
+	if (hwCode == rdr_AHM2D::HWID){
+		printf("Detected AHM2D\n");
+		return new radar_AHM2D(comm_h);
+	}
+	if (hwCode == rdr_AHM3D::HWID){
+		printf("Detected AHM3D\n");
+		printf("This device doesn't support 2D image generation\n");
+		return NULL;
+	}
+	if (hwCode == rdr_AHM2DL::HWID){
+		printf("Detected AHM2DL\n");
+		return new radar_AHM2DL(comm_h);
+	}
+	printf("Unknown radar ID %x\n", hwCode);
+	return NULL;
+}
+
 void preExit(){
 	delete rdr_h;
-	delete comm_h;
-	if (serial_fd > 0){
-		serialClose(serial_fd);
-	}
 	printf("Press any key to exit...");
 	getchar();
 	getchar();
@@ -140,36 +175,43 @@ int main(int argc, char * argv[]){
 		printUsage();
 		return 1;
 	}
-	enum {UART, SPI, UNKNOWN} interface;
-	interface = UNKNOWN;
+	enum {UART, SPI, UNKNOWN} sel_interface;
+	sel_interface = UNKNOWN;
 	if (strcmp(argv[1], "spi") == 0){
-		interface = SPI;
+		sel_interface = SPI;
 	}
 	if (strcmp(argv[1], "uart") == 0){
-		interface = UART;
+		sel_interface = UART;
 	}
-	if (interface == UNKNOWN){
+	if (sel_interface == UNKNOWN){
 		printUsage();
 		return 1;
 	}
-	if (interface == UART){
-		serial_fd = serialOpen(argv[2], 921600);
-		if (serial_fd < 0){
+	rifll_h * comm_h; //communication handler
+	if (sel_interface == UART){
+		comm_h = new radarif_ll_uart(std::string(argv[2]), 921600);
+		if (!comm_h->isValid()) {
 			printf("unable to open serial port\n");
 			retcode = -1;
 			preExit();
 			return retcode;
 		}
-		printf("Serial port open\n");
-		comm_h = new rifll_h(txdata, rxdata, 0);
 	}else{
-		comm_h = new radarif_ll_spi(argv[2], 0, 30000000UL, 0);
+#ifdef CONFIG_USE_SPI
+		//instance SPI communication handler (it takes care of open the SPI and initialize the communication channel)
+		comm_h = new radarif_ll_spi(argv[2], 0, 10000000UL, 0);
+#else
+		printf("Unsupported interface");
+		return -1;
+#endif
 	}
-	rdr_h = new radar_AHM2D(comm_h);
-
-
-
-
+	
+	rdr_h = openDevice(comm_h);
+	if (rdr_h == NULL) {
+		retcode = -1;
+		preExit();
+		return retcode;
+	}
 	//wait for settling
 
 	if (configure_rdr(rdr_h)){
@@ -183,7 +225,10 @@ int main(int argc, char * argv[]){
 
 	printf("Test readout of all channels\r\n");
 	{
-
+		radarData<cplx_float_t> rd2;
+		if (!rdr_h->rdr_rx_multichannel(&rd2)) {
+			printf("Done");
+		}
 		if (!rdr_h->rdr_get_image(&rd)){
 
 			FILE * fp = fopen("image.txt", "w");

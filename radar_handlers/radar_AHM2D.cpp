@@ -80,12 +80,12 @@ using namespace rdr_AHM2D;
 	int ret = rdr_get_val(getCommandItem((uint32_t)cmd), &payload); \
 	if (ret) \
 		return RDR_ERROR; \
-	*val =  payload.data_float; \
+	*pval =  payload.data_float; \
 	return 0; }
 
 
 const RadarCommandItem_t radar_AHM2D::RadarCommandItemTbl[] = {
-	{'s',RADARCOMM_START						,PT_NO		,0									},
+		{'s',RADARCOMM_START						,PT_NO		,0									},
 		{'o',RADARCOMM_STOP							,PT_NO		,0									},
 		{'d',RADARCOMM_GET_DATA						,PT_NO		,0									},
 		{'f',RADARCOMM_SET_FRAME_RATE				,PT_U16		,0xFFFF								},
@@ -113,7 +113,13 @@ const RadarCommandItem_t radar_AHM2D::RadarCommandItemTbl[] = {
 		{'v',RADARCOMM_SET_ANT_ARRAY				,PT_STRUCT	,QUERY_PAYLOAD_STRUCT_VARIABLE		},
 		{'m',RADARCOMM_SET_CANVAS					,PT_STRUCT	,QUERY_PAYLOAD_STRUCT_VARIABLE		},
 		{0x04,RADARCOMM_SG_BAUDRATE					,PT_U32		,0xFFFFFFFF							},
-		{0x02,RADARCOMM_SG_MULTISTREAM				,PT_U16	    ,0xFFFF								}};
+		{0x02,RADARCOMM_SG_MULTISTREAM				,PT_U16	    ,0xFFFF								},
+		{0x84,RADARCOMM_SET_PROFILE					,PT_U8	    ,0xFF								},
+		{0x80,RADARCOMM_SG_STATICOBJREMOVAL			,PT_U8	    ,0xFF								},
+		{0x81,RADARCOMM_SG_STATICOBJMAPUPDATETIME	,PT_FLOAT   ,0xFFFFFFFF							},
+		{0x82,RADARCOMM_SG_RXGAIN					,PT_U8	    ,0xFF								},
+		{0x83,RADARCOMM_SG_EMBEDDEDIMGALGO			,PT_U8	    ,0xFF								}
+};
 
 
 
@@ -242,7 +248,7 @@ int radar_AHM2D::rdr_set_iterations (uint16_t val){
 }
 int radar_AHM2D::rdr_get_iterations (uint16_t * val){
 	radar_command_payload payload;
-	int ret = rdr_get_val(getCommandItem(RADARCOMM_SET_OFFSET), &payload);
+	int ret = rdr_get_val(getCommandItem(RADARCOMM_SET_ITERATIONS), &payload);
 	if (ret)
 		return RDR_ERROR;
 	*val =  payload.data_uint16;
@@ -370,6 +376,34 @@ int radar_AHM2D::rdr_get_bwmode(uint8_t * bwmode){
 
 int radar_AHM2D::rdr_set_baudrate(uint32_t br){
 	mSetU32(RADARCOMM_SG_BAUDRATE, br);
+}
+
+int radar_AHM2D::rdr_set_profile(profile_t val) {
+	mSetU8(RADARCOMM_SET_PROFILE, (uint8_t)val);
+}
+int radar_AHM2D::rdr_set_staticObjRemoval(uint8_t enable) {
+	mSetU8(RADARCOMM_SG_STATICOBJREMOVAL, enable);
+}
+int radar_AHM2D::rdr_get_staticObjRemoval(uint8_t* penable) {
+	mGetU8(RADARCOMM_SG_STATICOBJREMOVAL, penable);
+}
+int radar_AHM2D::rdr_set_staticObjMapUpdateTime(float timeConstant) {
+	mSetFloat(RADARCOMM_SG_STATICOBJMAPUPDATETIME, timeConstant);
+}
+int radar_AHM2D::rdr_get_staticObjMapUpdateTime(float* ptimeConstant) {
+	mGetFloat(RADARCOMM_SG_STATICOBJMAPUPDATETIME, ptimeConstant);
+}
+int radar_AHM2D::rdr_set_rxGain(uint8_t val) {
+	mSetU8(RADARCOMM_SG_RXGAIN, val);
+}
+int radar_AHM2D::rdr_get_rxGain(uint8_t* pval) {
+	mGetU8(RADARCOMM_SG_RXGAIN, pval);
+}
+int radar_AHM2D::rdr_set_embeddedImgAlgo(uint8_t enable) {
+	mSetU8(RADARCOMM_SG_EMBEDDEDIMGALGO, enable);
+}
+int radar_AHM2D::rdr_get_embeddedImgAlgo(uint8_t* penable) {
+	mGetU8(RADARCOMM_SG_EMBEDDEDIMGALGO, penable);
 }
 
 

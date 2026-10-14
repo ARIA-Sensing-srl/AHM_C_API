@@ -31,7 +31,7 @@
 
 #ifdef WIN
 #define usleep(x) Sleep(x/1000)
-#define sleep(x) Sleep(x)
+#define sleep(x) Sleep(x*1000)
 #endif
 
 
@@ -94,15 +94,17 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 			break;
 	}
 
-	//bandwidth
 	uint16_t u16var;
-	if (!h->rdr_get_bw(&u16var)){
+	if (!h->rdr_get_bw(&u16var)) {
 		fprintf(cfgFile, "\"bandwidth\":%d,", u16var);
 	}
+	
 	//sampling rate
+	
 	if (!h->rdr_get_fSampling(&u16var)){
 		fprintf(cfgFile, "\"samplingrate\":%d,", u16var);
 	}
+	
 	//carrier
 	if (!h->rdr_get_freq_carrier(&u16var)){
 		fprintf(cfgFile, "\"carrier\":%d,", u16var);
@@ -110,9 +112,12 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 
 	//range min
 	float floatvar;
+	
+		
 	if (!h->rdr_get_min_Xrange(&floatvar)){
 		fprintf(cfgFile, "\"rangemin\":%g,", floatvar);
 	}
+	
 
 	//range max
 	if (!h->rdr_get_max_Xrange(&floatvar)){
@@ -125,15 +130,32 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 	}
 
 	//gain
-	uint16_t u16var2;
+	/*uint16_t u16var2;
 	if (!h->rdr_get_gain(&u16var, &u16var2)){
 		fprintf(cfgFile, "\"rxgain\":[%d, %d],", u16var, u16var2);
+	}*/
+	
+	uint8_t u8tmp;
+	if (!h->rdr_get_rxGain(&u8tmp)) {
+		fprintf(cfgFile, "\"rxgain\":%d,", u8tmp);
 	}
+	
 
-	//declutter
+	//
+
+	/*//declutter
 	if (!h->rdr_get_declutter_length(&u16var)){
 		fprintf(cfgFile, "\"declutter\":%d,", u16var);
+	}*/
+	if (!h->rdr_get_staticObjMapUpdateTime(&floatvar)) {
+		fprintf(cfgFile, "\"staticObjUpdateTime\":%f,", floatvar);
 	}
+
+	if (!h->rdr_get_staticObjRemoval(&u8tmp)) {
+		fprintf(cfgFile, "\"staticObjRemoval\":%d,", u8tmp);
+	}
+
+	//
 
 	//iterations
 	if (!h->rdr_get_iterations(&u16var)){
@@ -228,33 +250,11 @@ static int configure_rdr(radar_api_base * h){
 		return -1;
 	}
 
-	//set to 1 for 1.8GHz pulse's bandwidth (increase ADC speed and power consumption)
-	if (h->rdr_set_bwmode(0)){
-		printf("Bwmode failed\n");
+	if (h->rdr_set_profile(PROF_SR_MID_RES)) {
+		printf("Set profile failed\n");
 		return -1;
 	}
-	sleep(1); //bwmode command alter internal clock, this requires extra time before send new commands
-
-	//Carrier frequency, do not change
-	if (h->rdr_set_freq_carrier(8064)){
-		printf("Set frequency failed\n");
-		return -1;
-	}
-
-	//set up to 1800 MHz (mind to switch bwmode to 1 if bandwidth greater than 1.3G is required)
-	if (h->rdr_set_bw(1300)){
-		printf("Bandwidth setting failed\n");
-		return -1;
-	}
-
-	//application / co-processor elaboration options.
-	uint8_t opt1, opt0;
-	opt1 = 0;
-	opt0 = (1<<RDCOM_OPTPROC_BYTE0_DCREM_POS) | (1<<RDCOM_OPTPROC_BYTE0_MATCHFILT_POS);
-	if (h->rdr_set_optproc(opt0, opt1)){
-		printf("Opt mode failed\n");
-		return -1;
-	}
+	sleep(1); //required for correct setup
 
 	//acquisition offset (meters), the default -1 m value has been found by in-house calibration
 	if(h->rdr_set_offset(-1))
@@ -266,13 +266,15 @@ static int configure_rdr(radar_api_base * h){
 	if (h->rdr_set_max_Xrange(5))
 		return -1;
 
-	//receiver chain gain (values from 0-33), suggested value from 15 to 22
-	if (h->rdr_set_gain(18, 18))
+	if (h->rdr_set_staticObjRemoval(1)) {
+		printf("Set static object removal failed\n");
 		return -1;
+	}
 
-	//de-clatter length (equivalent to number of frame used for build the static object matrix)
-	if (h->rdr_set_declutter_length(200))
+	if (h->rdr_set_staticObjMapUpdateTime(30)) {
+		printf("Set static object map update time failed\n");
 		return -1;
+	}
 
 	//transmitter power (0==OFF to 7==MAX)
 	if (h->rdr_set_tx_power(7))
@@ -286,13 +288,8 @@ static int configure_rdr(radar_api_base * h){
 	if (h->rdr_set_iterations(iterationsSetting))
 		return -1;
 
-	//pulse sequence transmitted (default 1 pulse per burst)
-	int8_t code[1] = {1};
-	if(h->rdr_set_code(code, sizeof(code)))
-		return -1;
-
 	//returned data type (RAW/MTI)
-	if(h->rdr_set_elabtype(RT_RAW))
+	if(h->rdr_set_elabtype(RT_MTI))
 		return -1;
 
 	if (h->rdr_set_multistream(1)){

@@ -71,6 +71,17 @@ public:
     int rdr_get_multistream(uint16_t *pnstream) override;
     int rdr_conv_mask2sequence(uint8_t * txMask, uint8_t * rxMask, scanSequence_t * pseq, int num) override;
 
+    int rdr_set_profile(profile_t) override;
+    int rdr_set_staticObjRemoval(uint8_t enable) override;
+    int rdr_get_staticObjRemoval(uint8_t* enable) override;
+    int rdr_set_staticObjMapUpdateTime(float timeConstant) override;
+    int rdr_get_staticObjMapUpdateTime(float* timeConstant) override;
+    int rdr_set_rxGain(uint8_t) override;
+    int rdr_get_rxGain(uint8_t*) override;
+    int rdr_set_embeddedImgAlgo(uint8_t enable) override;
+    int rdr_get_embeddedImgAlgo(uint8_t* enable) override;
+
+
 protected:
 	const RadarCommandItem_t * RadarCommandItem;
 	int RadarCommandTblItems;

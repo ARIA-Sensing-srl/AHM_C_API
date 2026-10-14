@@ -90,6 +90,17 @@ public:
 	virtual int rdr_conv_mask2sequence(uint8_t * txMask, uint8_t * rxMask, scanSequence_t * pseq, int num){return -1;};
 	virtual int rdr_set_canvas(canvas3d_param_t){return -1;};
 	virtual int rdr_get_canvas(canvas3d_param_t *){return -1;};
+	//new
+	virtual int rdr_set_profile(profile_t) { return -1; };
+	virtual int rdr_set_staticObjRemoval(uint8_t enable) { return -1; };
+	virtual int rdr_get_staticObjRemoval(uint8_t * penable) { return -1; };
+	virtual int rdr_set_staticObjMapUpdateTime(float timeConstant) { return -1; };
+	virtual int rdr_get_staticObjMapUpdateTime(float * ptimeConstant) { return -1; };
+	virtual int rdr_set_rxGain(uint8_t val) { return -1; };
+	virtual int rdr_get_rxGain(uint8_t * pval) { return -1; };
+	virtual int rdr_set_embeddedImgAlgo(uint8_t enable) { return -1; };
+	virtual int rdr_get_embeddedImgAlgo(uint8_t* penable) { return -1; };
+
 };
 
 #define RDR_RET_DATA_COMPLEX 1
