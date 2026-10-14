@@ -3,7 +3,7 @@
  *
  *  Created on: 03 feb 2025
  *      Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  */
 
 #ifndef RADARIF_LL_H
@@ -39,29 +39,6 @@ public:
 };
 
 
-/*
-rifll_h * interface handler
-rifll_init initialize interface for low level radar comunication
-tx_cb is a function pointer to transmit data, accept data array and txfr size, return the number of data transitted or -1 if error
-rx_cb is a funciton pointer to receive data, accept data array and required size, return the number of bytes received or -1 if error
-rxBufferSize dinamically allocated buffer (set to 0 allocate standard  buffer) 
-*/
-
-
-/*
-execute a radar transaction
-rifll_h * interface handler
-txdata: tx array (not encoded)
-txsize: tx size
-rxdata: target array (decoded) if rxdata is NULL, upper level direct access to handler buffer
-rxsize: rx array size
-return the number of byte received, error otherwise 
-*/
-
-
-/*
-Deinit the handler
-*/
 
 
 #define RIFLL_INIT_DEF_BUFFER (100*1024)

@@ -3,7 +3,7 @@
  *
  *  Created on: 23 feb 2021
  *      Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  */
 
 
@@ -80,9 +80,6 @@ static int configure_rdr(radar_api_base * h){
 	h->rdr_get_embeddedImgAlgo((uint8_t*)&val);
 
 
-	//acquisition offset (meters), the default -1 m value has been found by in-house calibration
-	/*if (h->rdr_set_offset(-1))
-		return -1;*/
 
 	//acquisition range (meters)
 	if (h->rdr_set_min_Xrange(0))

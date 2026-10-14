@@ -2,7 +2,8 @@
  * radar_AHM2DL.cpp
  *
  *  Created on: Jan 7, 2026
- *      Author: AndreaPort
+ *      Author: ARIA Sensing
+ *      Copyright: ARIA Sensing, 2023
  */
 
 

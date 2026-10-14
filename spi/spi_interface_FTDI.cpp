@@ -2,7 +2,8 @@
  * spi_interface.c
  *
  *  Created on: Jun 3, 2024
- *      Author: andream
+ *      Author: ARIA Sensing
+ *      Copyright: ARIA Sensing, 2023
  */
 
 

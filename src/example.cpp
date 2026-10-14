@@ -3,7 +3,7 @@
  *
  *  Created on: 23 feb 2021
  *      Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  */
 
 
@@ -35,7 +35,6 @@
 #endif
 
 
-//static rifll_h * comm_h; 	//communication handler
 static radar_api_base* rdr_h;
 
 
@@ -129,11 +128,6 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 		fprintf(cfgFile, "\"offset\":%g,", floatvar);
 	}
 
-	//gain
-	/*uint16_t u16var2;
-	if (!h->rdr_get_gain(&u16var, &u16var2)){
-		fprintf(cfgFile, "\"rxgain\":[%d, %d],", u16var, u16var2);
-	}*/
 	
 	uint8_t u8tmp;
 	if (!h->rdr_get_rxGain(&u8tmp)) {
@@ -141,12 +135,6 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 	}
 	
 
-	//
-
-	/*//declutter
-	if (!h->rdr_get_declutter_length(&u16var)){
-		fprintf(cfgFile, "\"declutter\":%d,", u16var);
-	}*/
 	if (!h->rdr_get_staticObjMapUpdateTime(&floatvar)) {
 		fprintf(cfgFile, "\"staticObjUpdateTime\":%f,", floatvar);
 	}
@@ -410,7 +398,7 @@ int main(int argc, char * argv[]){
 	int retcode = 0;
 
 	//argv[1] interface, SPI or UART
-	//argv[2] interface file
+	//argv[2] interface file (PI: /dev/spidevx.x, FTDI 0)
 
 	if (argc != 3){
 		printUsage();

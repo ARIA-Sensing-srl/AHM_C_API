@@ -3,9 +3,9 @@
  *
  *  Created on: Jan 7, 2026
  *     Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  *
- *  Handler for AHM2DL module, communication is the same of the AHM2D.
+ *  
  */
 
 #ifndef RADAR_AHM2DL_H_

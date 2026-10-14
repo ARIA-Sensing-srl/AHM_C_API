@@ -3,7 +3,7 @@
  *
  *  Created on: 20 feb 2025
  *      Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  */
 
 #ifndef AHM_CMDS_RDR_COMMON_TYPES_H_
@@ -13,7 +13,7 @@
 
 typedef struct  _data_struct_t{
 	unsigned char size;
-	uint8_t buffer[RDRCOM_STRUCT_PAYLOAD_MAX]; //larger than original (16) need more data to be transferred in structured
+	uint8_t buffer[RDRCOM_STRUCT_PAYLOAD_MAX];
 }data_struct_t;
 
 typedef union  _radar_command_payload {
@@ -32,7 +32,7 @@ typedef enum  _payloadType_t{
 	PT_U32=3,
 	PT_FLOAT=4,
 	PT_STRUCT=5,
-	//special response (query with regular value, response with special format
+	//special response
 	PT_U8_SR=6,
 	PT_U16_SR=7,
 	PT_U32_SR=8,

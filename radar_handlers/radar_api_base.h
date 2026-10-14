@@ -3,7 +3,7 @@
  *
  *  Created on: 21 feb 2025
  *      Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  */
 
 #ifndef RADAR_API_BASE_H_

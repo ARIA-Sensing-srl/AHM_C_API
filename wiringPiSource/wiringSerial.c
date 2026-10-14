@@ -25,15 +25,11 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
-#ifdef WIN
-#include <termiWin.h>
-#else
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#endif
 
 #include <fcntl.h>
 

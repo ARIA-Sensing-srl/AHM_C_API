@@ -3,7 +3,7 @@
  *
  *  Created on: 27 gen 2025
  *      Author: ARIA Sensing
- *      Copyright: ARIA Sensing, 2023 - Confidential. Not for Public Release
+ *      Copyright: ARIA Sensing, 2023
  */
 
 
