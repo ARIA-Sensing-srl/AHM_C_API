@@ -69,7 +69,7 @@ list (APPEND example2_srcs ${sources} src/exampleimage.cpp )
 # add the data to the target, so it becomes visible in some IDE
 add_executable(AHMDataCapture ${example1_srcs} )
 add_executable(AHMImageCapture ${example2_srcs} )
-add_library(libAHMAPI SHARED ${sources})
+add_library(AHMAPI SHARED ${sources})
 if ((HAVE_MPSSE_LIB AND HAVE_FTD2XX) OR HAVE_WIRINGPI)
 if (HAVE_WIRINGPI)
 	target_link_libraries(AHMDataCapture -lwiringPi)
@@ -83,8 +83,8 @@ endif ((HAVE_MPSSE_LIB AND HAVE_FTD2XX) OR HAVE_WIRINGPI)
 # this lets me include files relative to the root source directory with a <> pair
 target_include_directories(AHMDataCapture PUBLIC ${INCDIR} )
 target_include_directories(AHMImageCapture PUBLIC ${INCDIR} )
-target_include_directories(libAHMAPI PUBLIC ${INCDIR})
+target_include_directories(AHMAPI PUBLIC ${INCDIR})
 
-set_target_properties(libAHMAPI PROPERTIES PUBLIC_HEADER "${LIB_HEADERS}")
+set_target_properties(AHMAPI PROPERTIES PUBLIC_HEADER "${LIB_HEADERS}")
 
 
