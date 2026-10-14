@@ -2,7 +2,6 @@ config.h
 config.log
 config.status
 stamp-h1
-config.h.in
 configure~
 AHMDatagrab
 build/
