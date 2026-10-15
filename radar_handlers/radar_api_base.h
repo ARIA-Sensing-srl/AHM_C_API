@@ -13,6 +13,7 @@
 #include "rdr_common_types.h"
 #include "ahm_common.h"
 #include "radarData.h"
+#include <string>
 
 typedef enum _rdrElabTypes_t{ 
     RT_UNKNOWN = -1, 	
@@ -26,6 +27,14 @@ typedef struct _RadarCommandItem_t{
 	payloadType_t payloadType;
 	uint32_t queryPayload;//for struct query payload is structure size
 }RadarCommandItem_t;
+
+typedef struct _RdrFWVer_t {
+	uint16_t customerID;
+	uint16_t hwcode;
+	uint8_t IDver;
+	uint8_t featureSet;
+	uint16_t IDsubVer;
+}RdrFWVer_t;
 
 
 class radar_api_base {
@@ -46,8 +55,8 @@ public:
 	const uint16_t HWCODE;
 	virtual int rdr_start(){return -1;};
 	virtual int rdr_stop(){return -1;};
-	virtual int rdr_set_frame_rate(uint16_t){return -1;};
-	virtual int rdr_get_frame_rate(uint16_t *){return -1;};
+	virtual int rdr_set_fps(uint16_t){return -1;};
+	virtual int rdr_get_fps(uint16_t *){return -1;};
 	virtual int rdr_set_tx_power(uint8_t){return -1;};
 	virtual int rdr_get_tx_power(uint8_t *){return -1;};
 	virtual int rdr_set_min_Xrange (float){return -1;};
@@ -68,25 +77,25 @@ public:
 	virtual int rdr_get_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8_t * pnumSeq){return -1;};
 	virtual int rdr_set_freq_carrier(uint16_t carrierMHz){return -1;};
 	virtual int rdr_get_freq_carrier(uint16_t * carrierMHz){return -1;};
-	virtual int rdr_set_bw(uint16_t bwMHz){return -1;};
-	virtual int rdr_get_bw(uint16_t * bwMHz){return -1;};
+	virtual int rdr_set_pulse_bandwidth(uint16_t bwMHz){return -1;};
+	virtual int rdr_get_pulse_bandwidth(uint16_t * bwMHz){return -1;};
 	virtual int rdr_set_bwmode(uint8_t bwmode){return -1;};
 	virtual int rdr_get_bwmode(uint8_t * bemode){return -1;};
 	virtual int rdr_set_code(int8_t *code, int size){return -1;};
 	virtual int rdr_get_code(int8_t *code, int *size){return -1;};
 	virtual int rdr_set_gain(uint16_t gainI, uint16_t gainQ){return -1;};
 	virtual int rdr_get_gain(uint16_t * gainI, uint16_t *gainQ){return -1;};
-    virtual int rdr_get_fSampling(uint16_t * fMhz){return -1;};
-	virtual int rdr_get_arrayDescr(txAntDesc_t *, rxAntDesc_t *){return -1;};
+    virtual int rdr_get_adcfreq(uint16_t * fMhz){return -1;};
+	virtual int rdr_get_antConfig(txAntDesc_t *, rxAntDesc_t *){return -1;};
 	virtual int rdr_set_canvas(canvas2d_param_t){return -1;};
 	virtual int rdr_get_canvas(canvas2d_param_t *){return -1;};
-	virtual int rdr_set_fmt(uint8_t fmt){return -1;};
-	virtual int rdr_get_fmt(uint8_t * fmt){return -1;};
+	virtual int rdr_set_data_fmt(uint8_t fmt){return -1;};
+	virtual int rdr_get_data_fmt(uint8_t * fmt){return -1;};
 	virtual int rdr_rx_multichannel(radarData<cplx_float_t> * prd){return -1;};
 	virtual int rdr_get_image(radarData<float> * prd){return -1;};
 	virtual int rdr_set_baudrate(uint32_t br){return -1;};
-	virtual int rdr_set_multistream(uint16_t nstream){return -1;};
-    virtual int rdr_get_multistream(uint16_t * pnstream){return -1;};
+	virtual int rdr_set_multistreammode(uint16_t nstream){return -1;};
+    virtual int rdr_get_multistreammode(uint16_t * pnstream){return -1;};
 	virtual int rdr_conv_mask2sequence(uint8_t * txMask, uint8_t * rxMask, scanSequence_t * pseq, int num){return -1;};
 	virtual int rdr_set_canvas(canvas3d_param_t){return -1;};
 	virtual int rdr_get_canvas(canvas3d_param_t *){return -1;};
@@ -100,7 +109,10 @@ public:
 	virtual int rdr_get_rxGain(uint8_t * pval) { return -1; };
 	virtual int rdr_set_embeddedImgAlgo(uint8_t enable) { return -1; };
 	virtual int rdr_get_embeddedImgAlgo(uint8_t* penable) { return -1; };
-
+	virtual int rdr_get_version_fw(RdrFWVer_t*) { return -1; };
+	virtual int rdr_set_range(float min, float max) { return -1; };
+	virtual int rdr_get_range(float* pmin, float* pmax) { return -1; };
+	virtual int rdr_get_versExtended(std::string * pstr, uint8_t type = 0) { return -1; };
 };
 
 #define RDR_RET_DATA_COMPLEX 1

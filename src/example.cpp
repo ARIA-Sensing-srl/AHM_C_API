@@ -94,13 +94,13 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 	}
 
 	uint16_t u16var;
-	if (!h->rdr_get_bw(&u16var)) {
+	if (!h->rdr_get_pulse_bandwidth(&u16var)) {
 		fprintf(cfgFile, "\"bandwidth\":%d,", u16var);
 	}
 	
 	//sampling rate
 	
-	if (!h->rdr_get_fSampling(&u16var)){
+	if (!h->rdr_get_adcfreq(&u16var)){
 		fprintf(cfgFile, "\"samplingrate\":%d,", u16var);
 	}
 	
@@ -110,17 +110,12 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 	}
 
 	//range min
-	float floatvar;
+	float floatvar, floatvar2;
 	
 		
-	if (!h->rdr_get_min_Xrange(&floatvar)){
+	if (!h->rdr_get_range(&floatvar, &floatvar2)) {
 		fprintf(cfgFile, "\"rangemin\":%g,", floatvar);
-	}
-	
-
-	//range max
-	if (!h->rdr_get_max_Xrange(&floatvar)){
-		fprintf(cfgFile, "\"rangemax\":%g,", floatvar);
+		fprintf(cfgFile, "\"rangemax\":%g,", floatvar2);
 	}
 
 	//offset
@@ -168,7 +163,7 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 	}
 
 	//frame rate
-	if (!h->rdr_get_frame_rate(&u16var)){
+	if (!h->rdr_get_fps(&u16var)){
 		fprintf(cfgFile, "\"framerate\":%d,", u16var);
 	}
 	//code
@@ -248,11 +243,10 @@ static int configure_rdr(radar_api_base * h){
 	if(h->rdr_set_offset(-1))
 		return -1;
 
-	//acquisition range (meters)
-	if(h->rdr_set_min_Xrange(0))
+
+	if (h->rdr_set_range(0, 5)) {
 		return -1;
-	if (h->rdr_set_max_Xrange(5))
-		return -1;
+	}
 
 	if (h->rdr_set_staticObjRemoval(1)) {
 		printf("Set static object removal failed\n");
@@ -280,22 +274,22 @@ static int configure_rdr(radar_api_base * h){
 	if(h->rdr_set_elabtype(RT_MTI))
 		return -1;
 
-	if (h->rdr_set_multistream(1)){
+	if (h->rdr_set_multistreammode(1)){
 		return -1;
 	}
 
 	//data format (data transfer only, returned data are converted locally to float)
-	if(h->rdr_set_fmt(FMT_F16))
+	if(h->rdr_set_data_fmt(FMT_F16))
 		return -1;
 
 	//required frame rate (Hz)
-	if (h->rdr_set_frame_rate(20))
+	if (h->rdr_set_fps(20))
 		return -1;
 
 
 	uint16_t fs;
 	//get current ADC's sampling rate (MHz)
-	if (h->rdr_get_fSampling(&fs))
+	if (h->rdr_get_adcfreq(&fs))
 		return -1;
 	printf("Sampling rate: %d\r\n", fs);
 
@@ -363,7 +357,7 @@ static int packedRead(){
 	gettimeofday(&start, NULL);
 	int numAcquisitions = 20; //number of rx command issued, actual number of acquisition is numAcquisitions*numStreams
 	uint16_t numStreams;
-	if(rdr_h->rdr_get_multistream(&numStreams))
+	if(rdr_h->rdr_get_multistreammode(&numStreams))
 		return -1;
 
 	for (int i = 0; i<numAcquisitions; i++){

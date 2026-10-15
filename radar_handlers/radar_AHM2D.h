@@ -14,6 +14,7 @@
 #include "radar_api_base.h"
 #include "ahm_common.h"
 #include "radarData.h"
+#include <string>
 
 
 class radar_AHM2D : public radar_api_base {
@@ -28,8 +29,8 @@ public:
 	virtual ~radar_AHM2D();
     int rdr_start() override;
     int rdr_stop() override;
-    int rdr_set_frame_rate(uint16_t) override;
-    int rdr_get_frame_rate(uint16_t *) override;
+    int rdr_set_fps(uint16_t) override;
+    int rdr_get_fps(uint16_t *) override;
     int rdr_set_tx_power(uint8_t) override;
     int rdr_get_tx_power(uint8_t *) override;
     int rdr_set_min_Xrange (float) override;
@@ -50,25 +51,25 @@ public:
     int rdr_get_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8_t * pnumSeq) override;
     int rdr_set_freq_carrier(uint16_t carrierMHz) override;
     int rdr_get_freq_carrier(uint16_t * carrierMHz) override;
-    int rdr_set_bw(uint16_t bwMHz) override;
-    int rdr_get_bw(uint16_t * bwMHz) override;
+    int rdr_set_pulse_bandwidth(uint16_t bwMHz) override;
+    int rdr_get_pulse_bandwidth(uint16_t * bwMHz) override;
     int rdr_set_bwmode(uint8_t bwmode) override;
     int rdr_get_bwmode(uint8_t * bemode) override;
     int rdr_set_code(int8_t *code, int size) override;
     int rdr_get_code(int8_t *code, int *size) override;
     int rdr_set_gain(uint16_t gainI, uint16_t gainQ) override;
     int rdr_get_gain(uint16_t * gainI, uint16_t *gainQ) override;
-    int rdr_get_fSampling(uint16_t *fMhz) override;
-    int rdr_get_arrayDescr(txAntDesc_t *, rxAntDesc_t *) override;
+    int rdr_get_adcfreq(uint16_t *fMhz) override;
+    int rdr_get_antConfig(txAntDesc_t *, rxAntDesc_t *) override;
     int rdr_set_canvas(canvas2d_param_t) override;
     int rdr_get_canvas(canvas2d_param_t *) override;
-    int rdr_set_fmt(uint8_t fmt) override;
-    int rdr_get_fmt(uint8_t * fmt) override;
+    int rdr_set_data_fmt(uint8_t fmt) override;
+    int rdr_get_data_fmt(uint8_t * fmt) override;
     int rdr_rx_multichannel(radarData<cplx_float_t> * prd) override;
     int rdr_get_image(radarData<float> * prd) override;
     int rdr_set_baudrate(uint32_t br) override;
-    int rdr_set_multistream(uint16_t nstream) override;
-    int rdr_get_multistream(uint16_t *pnstream) override;
+    int rdr_set_multistreammode(uint16_t nstream) override;
+    int rdr_get_multistreammode(uint16_t *pnstream) override;
     int rdr_conv_mask2sequence(uint8_t * txMask, uint8_t * rxMask, scanSequence_t * pseq, int num) override;
 
     int rdr_set_profile(profile_t) override;
@@ -80,6 +81,10 @@ public:
     int rdr_get_rxGain(uint8_t*) override;
     int rdr_set_embeddedImgAlgo(uint8_t enable) override;
     int rdr_get_embeddedImgAlgo(uint8_t* enable) override;
+    int rdr_get_version_fw(RdrFWVer_t*) override;
+    int rdr_set_range(float min, float max) override ;
+    int rdr_get_range(float* pmin, float* pmax) override;
+    int rdr_get_versExtended(std::string* pstr, uint8_t type = 0) override ;
 
 
 protected:

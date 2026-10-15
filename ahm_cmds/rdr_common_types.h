@@ -42,6 +42,7 @@ typedef enum  _payloadType_t{
 
 #define RDR_VERSION_SIZE 8
 #define RDR_VERSION_CMD 0x01
+#define RDR_VERSION_EXT_CMD 0x56
 
 #define QUERY_PAYLOAD_STRUCT_VARIABLE 0xFFFFFFFF
 

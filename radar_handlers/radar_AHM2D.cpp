@@ -12,6 +12,7 @@
 #include "string.h"
 #include "f16tosingle.h"
 #include "stdlib.h"
+#include <string>
 
 using namespace rdr_AHM2D;
 
@@ -155,7 +156,7 @@ int radar_AHM2D::rdr_stop(){
 		return RDR_ERROR;
 	return 0;
 }
-int radar_AHM2D::rdr_set_frame_rate(uint16_t val){
+int radar_AHM2D::rdr_set_fps(uint16_t val){
 	radar_command_payload payload;
 	payload.data_uint16 = val;
 	int ret = rdr_set_val(getCommandItem(RADARCOMM_SET_FRAME_RATE), &payload);
@@ -163,7 +164,7 @@ int radar_AHM2D::rdr_set_frame_rate(uint16_t val){
 		return RDR_ERROR;
 	return 0;
 }
-int radar_AHM2D::rdr_get_frame_rate(uint16_t * val){
+int radar_AHM2D::rdr_get_fps(uint16_t * val){
 	radar_command_payload payload;
 	int ret = rdr_get_val(getCommandItem(RADARCOMM_SET_FRAME_RATE), &payload);
 	if (ret)
@@ -222,6 +223,24 @@ int radar_AHM2D::rdr_get_max_Xrange (float * val){
 	*val =  payload.data_float;
 	return 0;
 }
+int radar_AHM2D::rdr_set_range(float min, float max) {
+	int ret;
+	if (ret = rdr_set_min_Xrange(min))
+		return ret;
+	if (ret = rdr_set_max_Xrange(max))
+		return ret;
+	return 0;
+};
+int radar_AHM2D::rdr_get_range(float* pmin, float* pmax) {
+	int ret;
+	if (ret = rdr_get_min_Xrange(pmin))
+		return ret;
+	if (ret = rdr_get_max_Xrange(pmax))
+		return ret;
+	return 0;
+};
+
+
 int radar_AHM2D::rdr_set_offset (float val){
 	radar_command_payload payload;
 	payload.data_float = val;
@@ -346,16 +365,35 @@ int radar_AHM2D::rdr_get_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8
 }
 
 
+int radar_AHM2D::rdr_get_version_fw(RdrFWVer_t* p) { 
+	uint8_t version[(RDR_VERSION_SIZE)+1]; //version + response command
+	uint8_t reqPayload = RDR_VERSION_CMD;
+	int ret = rh->txrxMessage(&reqPayload, 1, version, sizeof(version));
+	if (ret != (RDR_VERSION_SIZE)+1)
+		return RDR_ERR_COMM;
+	//check
+	if (version[0] != RDR_VERSION_CMD)
+		return RDR_ERR_COMM;
+
+	p->customerID = (uint16_t)version[1] | (((uint16_t)version[2]) << 8);
+	p->hwcode = (uint16_t)version[3] | (((uint16_t)version[4]) << 8);
+	p->IDver = version[5];
+	p->featureSet = version[6];
+	p->IDsubVer = (uint16_t)version[7] | (((uint16_t)version[8]) << 8);
+	return 0;
+};
+
+
 int radar_AHM2D::rdr_set_freq_carrier(uint16_t carrierMHz){
 	mSetU16(RADARCOMM_SET_FREQ_CARRIER, carrierMHz);
 }
 int radar_AHM2D::rdr_get_freq_carrier(uint16_t * carrierMHz){
 	mGetU16(RADARCOMM_SET_FREQ_CARRIER, carrierMHz);
 }
-int radar_AHM2D::rdr_set_bw(uint16_t bwMHz){
+int radar_AHM2D::rdr_set_pulse_bandwidth(uint16_t bwMHz){
 	mSetU16(RADARCOMM_SET_BW, bwMHz);
 }
-int radar_AHM2D::rdr_get_bw(uint16_t * bwMHz){
+int radar_AHM2D::rdr_get_pulse_bandwidth(uint16_t * bwMHz){
 	mGetU16(RADARCOMM_SET_BW, bwMHz);
 }
 int radar_AHM2D::rdr_set_bwmode(uint8_t bwmode){
@@ -407,10 +445,10 @@ int radar_AHM2D::rdr_get_embeddedImgAlgo(uint8_t* penable) {
 }
 
 
-int radar_AHM2D::rdr_set_multistream(uint16_t nstream){
+int radar_AHM2D::rdr_set_multistreammode(uint16_t nstream){
 	mSetU16(RADARCOMM_SG_MULTISTREAM, nstream);
 }
-int radar_AHM2D::rdr_get_multistream(uint16_t *pnstream){
+int radar_AHM2D::rdr_get_multistreammode(uint16_t *pnstream){
 	mGetU16(RADARCOMM_SG_MULTISTREAM, pnstream);
 }
 
@@ -493,10 +531,10 @@ int radar_AHM2D::rdr_get_gain(uint16_t * gainI, uint16_t *gainQ){
 	memcpy(gainQ, payload.data_struct.buffer+2,  2);
 	return 0;
 }
-int radar_AHM2D::rdr_get_fSampling(uint16_t *fMhz){
+int radar_AHM2D::rdr_get_adcfreq(uint16_t *fMhz){
 	mGetU16(RADARCOMM_GET_SAMPLING_RATE_MHZ, fMhz);
 }
-int radar_AHM2D::rdr_get_arrayDescr(txAntDesc_t * ptx, rxAntDesc_t * prx){
+int radar_AHM2D::rdr_get_antConfig(txAntDesc_t * ptx, rxAntDesc_t * prx){
 	radar_command_payload payload;
 	int ret = rdr_get_val(getCommandItem(RADARCOMM_SET_ANT_ARRAY), &payload);
 	if (ret)
@@ -569,10 +607,10 @@ int radar_AHM2D::rdr_get_canvas(canvas2d_param_t * p){
 	p->phiMax = pval[5];
 	return 0;
 }
-int radar_AHM2D::rdr_set_fmt(uint8_t fmt){
+int radar_AHM2D::rdr_set_data_fmt(uint8_t fmt){
 	mSetU8(RADARCOMM_SET_DATA_FMT, fmt);
 }
-int radar_AHM2D::rdr_get_fmt(uint8_t * fmt){
+int radar_AHM2D::rdr_get_data_fmt(uint8_t * fmt){
 	mGetU8(RADARCOMM_SET_DATA_FMT, fmt);
 }
 int radar_AHM2D::rdr_rx_multichannel(radarData<cplx_float_t> * prd){
@@ -675,6 +713,25 @@ int radar_AHM2D::rdr_rx_multichannel(radarData<cplx_float_t> * prd){
 		return RDR_ERROR;
 	return 0; //no error
 }
+
+int radar_AHM2D::rdr_get_versExtended(std::string* pstr, uint8_t type) {
+	uint8_t verStr[256]; //preallocate array
+	uint8_t reqPayload[2];
+	reqPayload[0] = RDR_VERSION_EXT_CMD;
+	reqPayload[1] = type;
+	int ret = rh->txrxMessage(reqPayload, 2, verStr, sizeof(verStr));
+	if (ret < 1)
+		return RDR_ERR_COMM;
+	//check
+	if (verStr[0] != RDR_VERSION_EXT_CMD)
+		return RDR_ERR_COMM;
+	//
+	verStr[ret] = 0; //place null
+	pstr->assign((const char*)(verStr + 1));
+	return 0;
+
+}
+
 int radar_AHM2D::rdr_get_image(radarData<float> * prd){
 
 

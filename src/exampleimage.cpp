@@ -104,17 +104,17 @@ static int configure_rdr(radar_api_base * h){
 		return -1;
 
 	//data format (data transfer only, returned data are converted locally to float)
-	if(h->rdr_set_fmt(FMT_F16))
+	if(h->rdr_set_data_fmt(FMT_F16))
 		return -1;
 
 	//required frame rate (Hz)
-	if (h->rdr_set_frame_rate(20))
+	if (h->rdr_set_fps(20))
 		return -1;
 
 
 	uint16_t fs;
 	//get current ADC's sampling rate (MHz)
-	if (h->rdr_get_fSampling(&fs))
+	if (h->rdr_get_adcfreq(&fs))
 		return -1;
 	printf("Sampling rate: %d\r\n", fs);
 
