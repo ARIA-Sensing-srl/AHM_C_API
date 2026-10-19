@@ -69,14 +69,14 @@ public:
 	virtual int rdr_get_iterations (uint16_t *){return -1;};
 	virtual int rdr_set_declutter_length (uint16_t){return -1;};
 	virtual int rdr_get_declutter_length (uint16_t *){return -1;};
-	virtual int rdr_set_elabtype(rdrElabTypes_t){return -1;};
-	virtual int rdr_get_elabtype(rdrElabTypes_t *){return -1;};
+	virtual int rdr_set_elab(rdrElabTypes_t){return -1;};
+	virtual int rdr_get_elab(rdrElabTypes_t *){return -1;};
 	virtual int rdr_set_optproc(uint8_t opt0, uint8_t opt1){return -1;};
 	virtual int rdr_get_optproc(uint8_t *opt0, uint8_t *opt1){return -1;};
 	virtual int rdr_set_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8_t numSeq){return -1;};
 	virtual int rdr_get_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8_t * pnumSeq){return -1;};
-	virtual int rdr_set_freq_carrier(uint16_t carrierMHz){return -1;};
-	virtual int rdr_get_freq_carrier(uint16_t * carrierMHz){return -1;};
+	virtual int rdr_set_carrier_frequency(uint16_t carrierMHz){return -1;};
+	virtual int rdr_get_carrier_frequency(uint16_t * carrierMHz){return -1;};
 	virtual int rdr_set_pulse_bandwidth(uint16_t bwMHz){return -1;};
 	virtual int rdr_get_pulse_bandwidth(uint16_t * bwMHz){return -1;};
 	virtual int rdr_set_bwmode(uint8_t bwmode){return -1;};

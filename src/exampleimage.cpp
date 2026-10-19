@@ -100,7 +100,7 @@ static int configure_rdr(radar_api_base * h){
 		return -1;
 
 	//returned data type (RAW/MTI)
-	if(h->rdr_set_elabtype(RT_MTI))
+	if(h->rdr_set_elab(RT_MTI))
 		return -1;
 
 	//data format (data transfer only, returned data are converted locally to float)

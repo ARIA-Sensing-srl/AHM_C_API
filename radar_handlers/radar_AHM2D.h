@@ -43,14 +43,14 @@ public:
     int rdr_get_iterations (uint16_t *) override;
     int rdr_set_declutter_length (uint16_t) override;
     int rdr_get_declutter_length (uint16_t *) override;
-    int rdr_set_elabtype(rdrElabTypes_t) override;
-    int rdr_get_elabtype(rdrElabTypes_t *) override;
+    int rdr_set_elab(rdrElabTypes_t) override;
+    int rdr_get_elab(rdrElabTypes_t *) override;
     int rdr_set_optproc(uint8_t opt0, uint8_t opt1) override;
     int rdr_get_optproc(uint8_t *opt0, uint8_t *opt1) override;
     int rdr_set_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8_t numSeq) override;
     int rdr_get_sequence(uint8_t * txSeqMask, uint8_t* rxSeqMask, uint8_t * pnumSeq) override;
-    int rdr_set_freq_carrier(uint16_t carrierMHz) override;
-    int rdr_get_freq_carrier(uint16_t * carrierMHz) override;
+    int rdr_set_carrier_frequency(uint16_t carrierMHz) override;
+    int rdr_get_carrier_frequency(uint16_t * carrierMHz) override;
     int rdr_set_pulse_bandwidth(uint16_t bwMHz) override;
     int rdr_get_pulse_bandwidth(uint16_t * bwMHz) override;
     int rdr_set_bwmode(uint8_t bwmode) override;

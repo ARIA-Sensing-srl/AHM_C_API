@@ -290,7 +290,7 @@ int radar_AHM2D::rdr_get_declutter_length (uint16_t * val){
 	return 0;
 }
 
-int radar_AHM2D::rdr_set_elabtype(rdrElabTypes_t val){
+int radar_AHM2D::rdr_set_elab(rdrElabTypes_t val){
 	radar_command_payload payload;
 	payload.data_uint8 = val;
 	int ret = rdr_set_val(getCommandItem(RADARCOMM_SET_ELAB), &payload);
@@ -298,7 +298,7 @@ int radar_AHM2D::rdr_set_elabtype(rdrElabTypes_t val){
 		return RDR_ERROR;
 	return 0;
 }
-int radar_AHM2D::rdr_get_elabtype(rdrElabTypes_t * val){
+int radar_AHM2D::rdr_get_elab(rdrElabTypes_t * val){
 	radar_command_payload payload;
 
 	int ret = rdr_get_val(getCommandItem(RADARCOMM_SET_ELAB), &payload);
@@ -384,10 +384,10 @@ int radar_AHM2D::rdr_get_version_fw(RdrFWVer_t* p) {
 };
 
 
-int radar_AHM2D::rdr_set_freq_carrier(uint16_t carrierMHz){
+int radar_AHM2D::rdr_set_carrier_frequency(uint16_t carrierMHz){
 	mSetU16(RADARCOMM_SET_FREQ_CARRIER, carrierMHz);
 }
-int radar_AHM2D::rdr_get_freq_carrier(uint16_t * carrierMHz){
+int radar_AHM2D::rdr_get_carrier_frequency(uint16_t * carrierMHz){
 	mGetU16(RADARCOMM_SET_FREQ_CARRIER, carrierMHz);
 }
 int radar_AHM2D::rdr_set_pulse_bandwidth(uint16_t bwMHz){

@@ -105,7 +105,7 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 	}
 	
 	//carrier
-	if (!h->rdr_get_freq_carrier(&u16var)){
+	if (!h->rdr_get_carrier_frequency(&u16var)){
 		fprintf(cfgFile, "\"carrier\":%d,", u16var);
 	}
 
@@ -147,7 +147,7 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 
 	//elaboration
 	rdrElabTypes_t elabType;
-	if (!h->rdr_get_elabtype(&elabType)){
+	if (!h->rdr_get_elab(&elabType)){
 		fprintf(cfgFile, "\"elab\":");
 		switch(elabType){
 			case RT_RAW:
@@ -271,7 +271,7 @@ static int configure_rdr(radar_api_base * h){
 		return -1;
 
 	//returned data type (RAW/MTI)
-	if(h->rdr_set_elabtype(RT_MTI))
+	if(h->rdr_set_elab(RT_MTI))
 		return -1;
 
 	if (h->rdr_set_multistreammode(1)){
