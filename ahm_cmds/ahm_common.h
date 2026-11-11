@@ -69,6 +69,42 @@ typedef struct canvas3d_param_t{
 	recAlgo_t algo	;
 }canvas3d_param_t;
 
+typedef struct _kalmand_2D_param_t {
+    float meas_unc;
+    float speed_unc;
+    float pos_unc;
+    float acc_unc;
+    uint8_t gateOutTicks;
+    uint8_t gateInTicks;
+    uint8_t parRunTicks;
+} kalmand_2D_param_t;
+
+typedef struct _blobFilter_param_t{
+    float phiSpan;
+    float amplDecay;
+    uint8_t topDetWndSize;
+    float top2SideThr;
+    uint8_t sideGuard;
+} blobFilter_param_t;
+
+
+typedef struct _det_blob_t {
+    float rho;
+    float phi;
+}det_blob_t;
+
+typedef struct _det_pos_t {
+    float x;
+    float y;
+    uint16_t ID;
+}det_pos_t;
+
+typedef struct _det_pos_full_t {
+    float sv[4]; //x vx y vy;
+    float P[4][4];
+    uint16_t ID;
+}det_pos_full_t;
+
 typedef struct _txAntDesc_t{
 	ant_t ant[4];
 }txAntDesc_t;

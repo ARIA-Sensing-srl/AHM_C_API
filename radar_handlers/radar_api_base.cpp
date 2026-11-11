@@ -173,3 +173,12 @@ int radar_api_base::getHW(rifll_h * h, uint16_t * pHWCode){
 int radar_api_base::getHW(uint16_t * pHWCode){
 	return getHW(rh, pHWCode);
 }
+
+void* radar_api_base::serialize(void* pbuffer, const void* pvar, int size) {
+	memcpy(pbuffer, pvar, size);
+	return (void*)((uint8_t*)pbuffer + size);
+}
+void* radar_api_base::deserialize(void* pbuffer, void* pvar, int size) {
+	memcpy(pvar,pbuffer, size);
+	return (void*)((uint8_t*)pbuffer + size);
+}

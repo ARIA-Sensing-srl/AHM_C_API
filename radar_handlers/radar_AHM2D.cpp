@@ -119,7 +119,19 @@ const RadarCommandItem_t radar_AHM2D::RadarCommandItemTbl[] = {
 		{0x80,RADARCOMM_SG_STATICOBJREMOVAL			,PT_U8	    ,0xFF								},
 		{0x81,RADARCOMM_SG_STATICOBJMAPUPDATETIME	,PT_FLOAT   ,0xFFFFFFFF							},
 		{0x82,RADARCOMM_SG_RXGAIN					,PT_U8	    ,0xFF								},
-		{0x83,RADARCOMM_SG_EMBEDDEDIMGALGO			,PT_U8	    ,0xFF								}
+		{0x83,RADARCOMM_SG_EMBEDDEDIMGALGO			,PT_U8	    ,0xFF								},
+
+		{'2',RADARCOMM_SG_BLOB_FILTER				,PT_STRUCT	    ,0xFFFFFFFF						},
+		{'K',RADARCOMM_SG_KALMAN2D					,PT_STRUCT	    ,0xFFFFFFFF						},
+		{110,RADARCOMM_SG_SNR0						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{44,RADARCOMM_SG_SNR1						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{45,RADARCOMM_SG_SNR2						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{95,RADARCOMM_SG_SNR3						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'4',RADARCOMM_SG_SNRPwr0					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'5',RADARCOMM_SG_SNRPwr1					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'6',RADARCOMM_SG_SNRPwr2					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'1',RADARCOMM_SG_SNRRanges					,PT_STRUCT	    ,0xFFFFFFFF						},
+		{'E',RADARCOMM_GET_Detection2D				,PT_STRUCT	    ,0xFFFFFFFF						}
 };
 
 
@@ -607,6 +619,251 @@ int radar_AHM2D::rdr_get_canvas(canvas2d_param_t * p){
 	p->phiMax = pval[5];
 	return 0;
 }
+
+int radar_AHM2D::rdr_set_SNRs(float SNRs[4]) {
+	radar_command_payload payload = { 0 };
+	payload.data_float = SNRs[0];
+	int ret = rdr_set_val(getCommandItem(RADARCOMM_SG_SNR0), &payload);
+	payload.data_float = SNRs[1];
+	ret |= rdr_set_val(getCommandItem(RADARCOMM_SG_SNR1), &payload);
+	payload.data_float = SNRs[2];
+	ret |= rdr_set_val(getCommandItem(RADARCOMM_SG_SNR2), &payload);
+	payload.data_float = SNRs[3];
+	ret |= rdr_set_val(getCommandItem(RADARCOMM_SG_SNR3), &payload);
+	if (ret)
+		return RDR_ERROR;
+	return 0;
+}
+int radar_AHM2D::rdr_set_SNRranges(float SNRranges[3]) {
+	radar_command_payload payload = { 0 };
+	payload.data_struct.size = 3 * sizeof(float);
+	void* pbuffer;
+	pbuffer = (void*)payload.data_struct.buffer;
+	for(int i = 0 ; i <3; i++)
+		pbuffer = serialize(pbuffer, (const void*)&SNRranges[i], sizeof(float));
+
+	int ret = rdr_set_val(getCommandItem(RADARCOMM_SG_SNRRanges), &payload);
+	if (ret)
+		return RDR_ERROR;
+	return 0;
+};
+int radar_AHM2D::rdr_set_SNRpwrs(float SNRpwrs[3]) {
+	radar_command_payload payload = { 0 };
+	payload.data_float = SNRpwrs[0];
+	int ret = rdr_set_val(getCommandItem(RADARCOMM_SG_SNRPwr0), &payload);
+	payload.data_float = SNRpwrs[1];
+	ret |= rdr_set_val(getCommandItem(RADARCOMM_SG_SNRPwr1), &payload);
+	payload.data_float = SNRpwrs[2];
+	ret |= rdr_set_val(getCommandItem(RADARCOMM_SG_SNRPwr2), &payload);
+	if (ret)
+		return RDR_ERROR;
+	return 0;
+}
+int radar_AHM2D::rdr_get_SNRs(float SNRs[4]) {
+	radar_command_payload payload;
+	int ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNR0), &payload);
+	if (ret) return RDR_ERROR;
+	SNRs[0] = payload.data_float;
+	ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNR1), &payload);
+	if (ret) return RDR_ERROR;
+	SNRs[1] = payload.data_float;
+	ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNR2), &payload);
+	if (ret) return RDR_ERROR;
+	SNRs[2] = payload.data_float;
+	ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNR3), &payload);
+	if (ret) return RDR_ERROR;
+	SNRs[3] = payload.data_float;
+	return 0;
+}
+int radar_AHM2D::rdr_get_SNRranges(float SNRranges[3]) {
+	radar_command_payload payload;
+	int ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNRRanges), &payload);
+	if (ret) return RDR_ERROR;
+	if (payload.data_struct.size != 3 * sizeof(float))
+		return RDR_ERROR;
+	deserialize((void*)payload.data_struct.buffer, (void*)SNRranges, 3 * sizeof(float));
+	return 0;
+}
+int radar_AHM2D::rdr_get_SNRpwrs(float SNRpwrs[3]) {
+	radar_command_payload payload;
+	int ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNRPwr0), &payload);
+	if (ret) return RDR_ERROR;
+	SNRpwrs[0] = payload.data_float;
+	ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNRPwr1), &payload);
+	if (ret) return RDR_ERROR;
+	SNRpwrs[1] = payload.data_float;
+	ret = rdr_get_val(getCommandItem(RADARCOMM_SG_SNRPwr2), &payload);
+	if (ret) return RDR_ERROR;
+	SNRpwrs[2] = payload.data_float;
+	return 0;
+}
+int radar_AHM2D::rdr_set_blobFilter(blobFilter_param_t params) {
+	radar_command_payload payload;
+	void* pbuffer;
+	payload.data_struct.size = 14;
+	pbuffer = (void*)payload.data_struct.buffer;
+	pbuffer = serialize(pbuffer, (const void*)&params.phiSpan, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&params.amplDecay, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&params.topDetWndSize, sizeof(uint8_t));
+	pbuffer = serialize(pbuffer, (const void*)&params.top2SideThr, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&params.sideGuard, sizeof(uint8_t));
+	int ret = rdr_set_val(getCommandItem(RADARCOMM_SG_BLOB_FILTER), &payload);
+	if (ret)
+		return RDR_ERROR;
+	return 0;
+}
+int radar_AHM2D::rdr_get_blobFilter(blobFilter_param_t* pparams) {
+	radar_command_payload payload;
+	int ret = rdr_get_val(getCommandItem(RADARCOMM_SG_BLOB_FILTER), &payload);
+	if (ret)
+		return RDR_ERROR;
+	if (payload.data_struct.size != 14) {
+		return RDR_ERROR;
+	}
+	void * pbuffer = (void*)payload.data_struct.buffer;
+	pbuffer = deserialize(pbuffer, (void*)&pparams->phiSpan, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparams->amplDecay, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparams->topDetWndSize, sizeof(uint8_t));
+	pbuffer = deserialize(pbuffer, (void*)&pparams->top2SideThr, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparams->sideGuard, sizeof(uint8_t));
+	return 0;
+}
+int radar_AHM2D::rdr_set_kalman2D(kalmand_2D_param_t param) {
+	radar_command_payload payload;
+	void* pbuffer;
+	payload.data_struct.size = 19;
+	pbuffer = (void*)payload.data_struct.buffer;
+	pbuffer = serialize(pbuffer, (const void*)&param.meas_unc, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&param.speed_unc, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&param.pos_unc, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&param.acc_unc, sizeof(float));
+	pbuffer = serialize(pbuffer, (const void*)&param.gateInTicks, sizeof(uint8_t));
+	pbuffer = serialize(pbuffer, (const void*)&param.gateOutTicks, sizeof(uint8_t));
+	pbuffer = serialize(pbuffer, (const void*)&param.parRunTicks, sizeof(uint8_t));
+	int ret = rdr_set_val(getCommandItem(RADARCOMM_SG_KALMAN2D), &payload);
+	if (ret)
+		return RDR_ERROR;
+	return 0;
+}
+
+int radar_AHM2D::rdr_get_detection2D(std::vector<det_blob_t>* p) {
+	uint8_t databuffer[2048]; //preallocate array
+	uint8_t reqPayload[2];
+	const RadarCommandItem_t* pitem;
+	pitem = getCommandItem(RADARCOMM_GET_Detection2D);
+	reqPayload[0] = pitem->cmdCode;
+	reqPayload[1] = 0;
+	int retSize = rh->txrxMessage(reqPayload, 2, databuffer, sizeof(databuffer));
+	if (retSize < 1)
+		return RDR_ERR_COMM;
+	if (databuffer[0] != pitem->cmdCode) {
+		return RDR_ERR_COMM;
+	}
+	//checksize
+	int itemSize = 8; //2 floats
+	int numItems = (retSize - 1) / itemSize;
+	//check size;
+	if (retSize != (numItems * itemSize) + 1)
+		return RDR_ERR_COMM; //no match
+	void* pbuffer;
+	pbuffer = (void*)&databuffer[1]; //ship first
+
+	p->resize(numItems);
+	for (int i = 0; i < numItems; i++) {
+		det_blob_t cur;
+		pbuffer = deserialize(pbuffer, (void*)&cur.rho, sizeof(float));
+		pbuffer = deserialize(pbuffer, (void*)&cur.phi, sizeof(float));
+		p->at(i) = cur;
+	}
+	return 0;
+}
+int radar_AHM2D::rdr_get_detection2D(std::vector<det_pos_t>* p, bool filtered) {
+	uint8_t databuffer[2048]; //preallocate array
+	uint8_t reqPayload[2];
+	const RadarCommandItem_t* pitem;
+	pitem = getCommandItem(RADARCOMM_GET_Detection2D);
+	reqPayload[0] = pitem->cmdCode;
+	reqPayload[1] = filtered ? 2 : 1;
+	int retSize = rh->txrxMessage(reqPayload, 2, databuffer, sizeof(databuffer));
+	if (retSize < 1)
+		return RDR_ERR_COMM;
+	if (databuffer[0] != pitem->cmdCode) {
+		return RDR_ERR_COMM;
+	}
+	//checksize
+	int itemSize = 10; //2 floats + 1 uint16
+	int numItems = (retSize - 1) / itemSize;
+	//check size;
+	if (retSize != (numItems * itemSize) + 1)
+		return RDR_ERR_COMM; //no match
+	void* pbuffer;
+	pbuffer = (void*)&databuffer[1]; //ship first
+
+	p->resize(numItems);
+	for (int i = 0; i < numItems; i++) {
+		det_pos_t cur;
+		pbuffer = deserialize(pbuffer, (void*)&cur.x, sizeof(float));
+		pbuffer = deserialize(pbuffer, (void*)&cur.y, sizeof(float));
+		pbuffer = deserialize(pbuffer, (void*)&cur.ID, sizeof(uint16_t));
+		p->at(i) = cur;
+	}
+	return 0;
+}
+int radar_AHM2D::rdr_get_detection2D(std::vector<det_pos_full_t>* p, bool filtered) {
+	uint8_t databuffer[2048]; //preallocate array
+	uint8_t reqPayload[2];
+	const RadarCommandItem_t* pitem;
+	pitem = getCommandItem(RADARCOMM_GET_Detection2D);
+	reqPayload[0] = pitem->cmdCode;
+	reqPayload[1] = filtered ? 2 : 1;
+	int retSize = rh->txrxMessage(reqPayload, 2, databuffer, sizeof(databuffer));
+	if (retSize < 1)
+		return RDR_ERR_COMM;
+	if (databuffer[0] != pitem->cmdCode) {
+		return RDR_ERR_COMM;
+	}
+	//checksize
+	int itemSize = 82; //2 floats + 1 uint16
+	int numItems = (retSize - 1) / itemSize;
+	//check size;
+	if (retSize != (numItems * itemSize) + 1)
+		return RDR_ERR_COMM; //no match
+	void* pbuffer;
+	pbuffer = (void*)&databuffer[1]; //ship first
+
+	p->resize(numItems);
+	for (int i = 0; i < numItems; i++) {
+		det_pos_full_t cur;
+		pbuffer = deserialize(pbuffer, (void*)&cur.sv, sizeof(float)*4);
+		pbuffer = deserialize(pbuffer, (void*)&cur.P, sizeof(float)*16);
+		pbuffer = deserialize(pbuffer, (void*)&cur.ID, sizeof(uint16_t));
+		p->at(i) = cur;
+	}
+	return 0;
+}
+
+int radar_AHM2D::rdr_get_kalman2D(kalmand_2D_param_t* pparam) {
+	radar_command_payload payload;
+	void* pbuffer;
+	
+	pbuffer = (void*)payload.data_struct.buffer;
+	int ret = rdr_get_val(getCommandItem(RADARCOMM_SG_KALMAN2D), &payload);
+	if (ret)
+		return RDR_ERROR;
+	if (payload.data_struct.size != 19) {
+		return RDR_ERROR;
+	}
+	pbuffer = deserialize(pbuffer, (void*)&pparam->meas_unc, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparam->speed_unc, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparam->pos_unc, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparam->acc_unc, sizeof(float));
+	pbuffer = deserialize(pbuffer, (void*)&pparam->gateInTicks, sizeof(uint8_t));
+	pbuffer = deserialize(pbuffer, (void*)&pparam->gateOutTicks, sizeof(uint8_t));
+	pbuffer = deserialize(pbuffer, (void*)&pparam->parRunTicks, sizeof(uint8_t));
+	return 0;
+}
+
+
 int radar_AHM2D::rdr_set_data_fmt(uint8_t fmt){
 	mSetU8(RADARCOMM_SET_DATA_FMT, fmt);
 }

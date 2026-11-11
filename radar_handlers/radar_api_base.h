@@ -14,6 +14,7 @@
 #include "ahm_common.h"
 #include "radarData.h"
 #include <string>
+#include <vector>
 
 typedef enum _rdrElabTypes_t{ 
     RT_UNKNOWN = -1, 	
@@ -44,6 +45,8 @@ protected:
 	int rdr_get_val(const RadarCommandItem_t * pitem, radar_command_payload * ppayload);
 	int rdr_set_val(const RadarCommandItem_t * pitem, radar_command_payload * ppayload);
 	const RadarCommandItem_t * getCommandItem(uint32_t srcCmd, const RadarCommandItem_t * tbl, int tblSize);
+	void* serialize(void* pbuffer, const void* pvar, int size); //return pointer to next location
+	void* deserialize(void* pbuffer, void* pvar, int size); //return pointer to next location
 
 public:
 	radar_api_base(rifll_h*, uint16_t hw);
@@ -99,7 +102,6 @@ public:
 	virtual int rdr_conv_mask2sequence(uint8_t * txMask, uint8_t * rxMask, scanSequence_t * pseq, int num){return -1;};
 	virtual int rdr_set_canvas(canvas3d_param_t){return -1;};
 	virtual int rdr_get_canvas(canvas3d_param_t *){return -1;};
-	//new
 	virtual int rdr_set_profile(profile_t) { return -1; };
 	virtual int rdr_set_staticObjRemoval(uint8_t enable) { return -1; };
 	virtual int rdr_get_staticObjRemoval(uint8_t * penable) { return -1; };
@@ -113,6 +115,23 @@ public:
 	virtual int rdr_set_range(float min, float max) { return -1; };
 	virtual int rdr_get_range(float* pmin, float* pmax) { return -1; };
 	virtual int rdr_get_versExtended(std::string * pstr, uint8_t type = 0) { return -1; };
+	//
+	virtual int rdr_set_SNRs(float SNRs[4]) { return -1; };
+	virtual int rdr_set_SNRranges(float SNRranges[3]) { return -1; };
+	virtual int rdr_set_SNRpwrs(float SNRpwrs[3]) { return -1; };
+	virtual int rdr_get_SNRs(float SNRs[4]) { return -1; };
+	virtual int rdr_get_SNRranges(float SNRranges[3]) { return -1; };
+	virtual int rdr_get_SNRpwrs(float SNRpwrs[3]) { return -1; };
+	virtual int rdr_set_blobFilter(blobFilter_param_t) { return -1; };
+	virtual int rdr_get_blobFilter(blobFilter_param_t*) { return -1; };
+	virtual int rdr_set_kalman2D(kalmand_2D_param_t) { return -1; };
+	virtual int rdr_get_kalman2D(kalmand_2D_param_t*) { return -1; };
+	virtual int rdr_get_detection2D(std::vector<det_blob_t>* p) { return -1; };
+	virtual int rdr_get_detection2D(std::vector<det_pos_t>* p, bool filtered) { return -1; };
+	virtual int rdr_get_detection2D(std::vector<det_pos_full_t>* p, bool filtered) { return -1; };
+
+	//virtual int rdr_get_detection2D()
+
 };
 
 #define RDR_RET_DATA_COMPLEX 1

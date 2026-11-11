@@ -87,6 +87,21 @@ public:
     int rdr_get_versExtended(std::string* pstr, uint8_t type = 0) override ;
 
 
+    int rdr_set_SNRs(float SNRs[4]) override;
+    int rdr_set_SNRranges(float SNRranges[3]) override;
+    int rdr_set_SNRpwrs(float SNRpwrs[3]) override;
+    int rdr_get_SNRs(float SNRs[4]) override;
+    int rdr_get_SNRranges(float SNRranges[3]) override;
+    int rdr_get_SNRpwrs(float SNRpwrs[3]) override;
+    int rdr_set_blobFilter(blobFilter_param_t) override;
+    int rdr_get_blobFilter(blobFilter_param_t*) override;
+    int rdr_set_kalman2D(kalmand_2D_param_t) override;
+    int rdr_get_kalman2D(kalmand_2D_param_t*) override;
+    int rdr_get_detection2D(std::vector<det_blob_t>* p) override ;
+    int rdr_get_detection2D(std::vector<det_pos_t>* p, bool filtered) override;
+    int rdr_get_detection2D(std::vector<det_pos_full_t>* p, bool filtered) override;
+
+
 protected:
 	const RadarCommandItem_t * RadarCommandItem;
 	int RadarCommandTblItems;

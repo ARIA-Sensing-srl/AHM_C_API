@@ -51,7 +51,18 @@ const RadarCommandItem_t radar_AHM3D::RadarCommandItemTbl[] = {
 		{0x80,RADARCOMM_SG_STATICOBJREMOVAL			,PT_U8	    ,0xFF								},
 		{0x81,RADARCOMM_SG_STATICOBJMAPUPDATETIME	,PT_FLOAT   ,0xFFFFFFFF							},
 		{0x82,RADARCOMM_SG_RXGAIN					,PT_U8	    ,0xFF								},
-		{0x83,RADARCOMM_SG_EMBEDDEDIMGALGO			,PT_U8	    ,0xFF								} };
+		{0x83,RADARCOMM_SG_EMBEDDEDIMGALGO			,PT_U8	    ,0xFF								},
+		{'2',RADARCOMM_SG_BLOB_FILTER				,PT_STRUCT	    ,0xFFFFFFFF						},
+		{'K',RADARCOMM_SG_KALMAN2D					,PT_STRUCT	    ,0xFFFFFFFF						},
+		{110,RADARCOMM_SG_SNR0						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{44,RADARCOMM_SG_SNR1						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{45,RADARCOMM_SG_SNR2						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{95,RADARCOMM_SG_SNR3						,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'4',RADARCOMM_SG_SNRPwr0					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'5',RADARCOMM_SG_SNRPwr1					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'6',RADARCOMM_SG_SNRPwr2					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'1',RADARCOMM_SG_SNRRanges					,PT_FLOAT	    ,0xFFFFFFFF						},
+		{'E',RADARCOMM_GET_Detection2D				,PT_STRUCT	    ,0xFFFFFFFF						} };
 
 radar_AHM3D::radar_AHM3D(rifll_h* val) : radar_AHM2D(val, 0xa3d0){
 	RadarCommandItem = RadarCommandItemTbl;

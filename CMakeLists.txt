@@ -66,23 +66,28 @@ endif (MSVC)
 ###############################################################################
 list (APPEND example1_srcs ${sources} src/example.cpp )
 list (APPEND example2_srcs ${sources} src/exampleimage.cpp )
+list (APPEND exampletracker_srcs ${sources} src/example_tracker2D.cpp )
 # add the data to the target, so it becomes visible in some IDE
 add_executable(AHMDataCapture ${example1_srcs} )
 add_executable(AHMImageCapture ${example2_srcs} )
+add_executable(AHMTracker2D ${exampletracker_srcs} )
 add_library(AHMAPI SHARED ${sources})
 if ((HAVE_MPSSE_LIB AND HAVE_FTD2XX) OR HAVE_WIRINGPI)
 if (HAVE_WIRINGPI)
 	target_link_libraries(AHMDataCapture -lwiringPi)
 	target_link_libraries(AHMImageCapture -lwiringPi)
+	target_link_libraries(AHMTracker2D -lwiringPi)
 else (HAVE_WIRINGPI)
 	target_link_libraries(AHMDataCapture -lmpsse -lftd2xx)
 	target_link_libraries(AHMImageCapture -lmpsse -lftd2xx)
+	target_link_libraries(AHMTracker2D -lmpsse -lftd2xx)
 endif (HAVE_WIRINGPI)
 endif ((HAVE_MPSSE_LIB AND HAVE_FTD2XX) OR HAVE_WIRINGPI)
 
 # this lets me include files relative to the root source directory with a <> pair
 target_include_directories(AHMDataCapture PUBLIC ${INCDIR} )
 target_include_directories(AHMImageCapture PUBLIC ${INCDIR} )
+target_include_directories(AHMTracker2D PUBLIC ${INCDIR} )
 target_include_directories(AHMAPI PUBLIC ${INCDIR})
 
 set_target_properties(AHMAPI PROPERTIES PUBLIC_HEADER "${LIB_HEADERS}")
