@@ -28,6 +28,7 @@
 #include "string.h"
 #include <stddef.h>
 #include "radar_AHM2DL.h"
+#include "radar_AHM2DSC.h"
 
 #ifdef WIN
 #define usleep(x) Sleep(x/1000)
@@ -87,6 +88,9 @@ static int save_rdr_configuration(radar_api_base * h, const char * filename){
 			break;
 		case rdr_AHM3D::HWID:
 			fprintf(cfgFile, "\"AHM3DL\",");
+			break;
+		case rdr_AHM2DSC::HWID:
+			fprintf(cfgFile, "\"AHM2DSC\",");
 			break;
 		default:
 			fprintf(cfgFile, "\"unknown\",");
@@ -319,6 +323,10 @@ radar_api_base * openDevice(rifll_h * comm_h){
 	if (hwCode == rdr_AHM2DL::HWID){
 		printf("Detected AHM2DL\n");
 		return new radar_AHM2DL(comm_h);
+	}
+	if (hwCode == rdr_AHM2DSC::HWID) {
+		printf("Detected AHM2DSC\n");
+		return new radar_AHM2DSC(comm_h);
 	}
 	printf("Unknown radar ID %x\n", hwCode);
 	return NULL;

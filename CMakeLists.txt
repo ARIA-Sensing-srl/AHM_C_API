@@ -15,6 +15,7 @@ list (APPEND sources radar_data/radarData.cpp
 	radar_handlers/radar_AHM2D.cpp 
 	radar_handlers/radar_AHM3D.cpp 
 	radar_handlers/radar_AHM2DL.cpp 
+	radar_handlers/radar_AHM2DSC.cpp 
 	radar_handlers/radar_api_base.cpp 
 	src/f16tosingle.cpp 
 	src/msgEncoderDecored.cpp 

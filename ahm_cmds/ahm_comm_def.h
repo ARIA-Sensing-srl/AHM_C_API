@@ -134,6 +134,19 @@ namespace rdr_AHM2DL {
 }
 
 
+namespace rdr_AHM2DSC {
+
+	typedef enum {
+		RADARCOMM_BASIC
+	}radar_command;
+
+	const uint8_t RDR_TX_POWER_OFF = 0;
+	const uint8_t RDR_TX_POWER_HIGH = 7;
+
+	const uint16_t HWID = 0xa2d5;
+}
+
+
 
 
 
