@@ -7,7 +7,7 @@ AM_CPPFLAGS=-I$(srcdir)/ahm_cmds \
  -I$(srcdir)/uart \
  -I$(srcdir)/wiringPiSource
 
-bin_PROGRAMS = AHMCaptureData AHMCaptureImage
+bin_PROGRAMS = AHMCaptureData AHMCaptureImage AHMTracker2D
 
 if ENABLE_SPI
   AM_CPPFLAGS+=-DCONFIG_USE_SPI
@@ -25,6 +25,7 @@ app_common_sources = \
 	radar_handlers/radar_AHM2D.cpp \
 	radar_handlers/radar_AHM3D.cpp \
 	radar_handlers/radar_AHM2DL.cpp \
+	radar_handlers/radar_AHM2DSC.cpp \
 	radar_handlers/radar_api_base.cpp \
 	src/f16tosingle.cpp \
 	src/msgEncoderDecored.cpp \
@@ -58,3 +59,7 @@ AHMCaptureData_LDADD = $(app_common_ldadd)
 
 AHMCaptureImage_SOURCES = src/exampleimage.cpp $(app_common_sources)
 AHMCaptureImage_LDADD = $(app_common_ldadd)
+
+AHMTracker2D_SOURCES = src/example_tracker2D.cpp $(app_common_sources)
+AHMTracker2D_LDADD = $(app_common_ldadd)
+
