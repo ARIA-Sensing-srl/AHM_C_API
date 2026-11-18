@@ -815,7 +815,7 @@ int radar_AHM2D::rdr_get_detection2D(std::vector<det_pos_full_t>* p, bool filter
 	const RadarCommandItem_t* pitem;
 	pitem = getCommandItem(RADARCOMM_GET_Detection2D);
 	reqPayload[0] = pitem->cmdCode;
-	reqPayload[1] = filtered ? 2 : 1;
+	reqPayload[1] = filtered ? 4 : 3;
 	int retSize = rh->txrxMessage(reqPayload, 2, databuffer, sizeof(databuffer));
 	if (retSize < 1)
 		return RDR_ERR_COMM;
