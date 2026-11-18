@@ -11,7 +11,7 @@ This library implements routine for configuring and get data from the devices.
 * **Serial (UART)**: this is the default and always enable interface type
 * **SPI**: (disable default), implemented using FTDI libraries (test with C232HM-DDHSL-0 cable) or wiringPi libraries (raspberry pi only)
 
-## Autotool example
+## Autotool
 ```bash
 	git clone https://github.com/ARIA-Sensing-srl/AHM_C_API.git
 	cd AHM_C_API
@@ -33,7 +33,7 @@ SPI using wiring PI (raspberry only), wiringPi libraries requried
 	./configure --enable-spi=wiringpi
 ```
 
-##CMake
+## CMake
 ```bash
 	git clone https://github.com/ARIA-Sensing-srl/AHM_C_API.git
 	cd AHM_C_API
@@ -50,7 +50,7 @@ To enable SPI support
 
 
 
-##Examples: 
+## Examples
 * **AHMDataCapture**: shows how to configure the device and retrieve data. Data are stored into txt files, one raw for acquisition, commad-separated-value, organized as I0, Q0, .... In, Qn where I is the real part and Q is the imaginary part of the sample n. The example retrieve the final configuration and save all the data into a JSON formatted file
 * **AHMImageCapture**: shows how to configure the device and get computed image. Outcome is stored into a comma-separated-value file.
 * **AHMTracker2D**: enable the embedded tracking algorithm (AHM2D, AHM2DL and AHM2DSC only). Example shows the position of the first target retrieved
